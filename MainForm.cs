@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime;
 using System.Threading;
 using System.Windows.Forms;
 using ZenStates.Components;
 using ZenStates.Core;
+using ZenStates.Properties;
 using ZenStates.Utils;
 
 namespace ZenStates
@@ -67,8 +69,11 @@ namespace ZenStates
             MessageBox.Show(message, title, MessageBoxButtons.OK, MessageBoxIcon.Error);
         }
 
-        private static void ExitApplication()
+        private void ExitApplication()
         {
+            //cpu?.io?.Close(true);
+            cpu?.Dispose();
+
             if (Application.MessageLoop)
                 Application.Exit();
             else
@@ -329,7 +334,7 @@ namespace ZenStates
             manualOverclockItem.Multi = GetCurrentMulti(ocmode);
             manualOverclockItem.ProchotEnabled = cpu.IsProchotEnabled();
             manualOverclockItem.coreDisableMap = cpu.info.topology.coreDisableMap;
-            manualOverclockItem.CcxInCcd = cpu.info.family == Cpu.Family.FAMILY_19H ? 1 : 2;
+            manualOverclockItem.CcxInCcd = (int)(cpu.info.topology.ccds / cpu.info.topology.ccxs);
             manualOverclockItem.Cores = (int)cpu.info.topology.physicalCores;
         }
 
@@ -742,7 +747,7 @@ namespace ZenStates
             {
                 HandleError(ex.Message);
                 Dispose();
-                Application.Exit();
+                ExitApplication();
             }
         }
 
@@ -807,7 +812,7 @@ namespace ZenStates
         private void TrayMenuItemExit_Click(object sender, EventArgs e)
         {
             Dispose();
-            Application.Exit();
+            ExitApplication();
         }
 
         static void MinimizeFootprint()
@@ -857,22 +862,22 @@ namespace ZenStates
         {
             CheckBox cb = sender as CheckBox;
             int cores = cpu.systemInfo.Threads;
-            int step = cpu.systemInfo.SMT ? cpu.systemInfo.NumCoresInCCX * 2 : cpu.systemInfo.NumCoresInCCX;
+            uint step = cpu.systemInfo.SMT ? cpu.info.topology.coresPerCcx * 2 : cpu.info.topology.coresPerCcx;
             int index = 0;
 
-            double[] ccx_frequencies = new double[cpu.systemInfo.CCXCount];
+            double[] ccx_frequencies = new double[cpu.info.topology.ccxs];
 
             if (cb.Checked)
             {
-                for (var i = 0; i < cores; i += step)
+                for (uint i = 0; i < cores; i += step)
                 {
-                    ccx_frequencies[index] = cpu.GetCoreMulti(i);
+                    ccx_frequencies[index] = cpu.GetCoreMulti((int)i);
                     ++index;
                 }
                 Storage.Add($"ccx_frequencies", ccx_frequencies);
                 Storage.Add("oc_vid", manualOverclockItem.Vid);
 
-                for (var i = 0; i < cpu.systemInfo.CCXCount; ++i)
+                for (var i = 0; i < cpu.info.topology.ccxs; ++i)
                 {
                     Console.WriteLine($"ccx{i}: " + Storage.Get<double[]>($"ccx_frequencies")[i].ToString());
                 }
@@ -889,7 +894,7 @@ namespace ZenStates
                 }
                 else
                 {
-                    int[] masks = new int[cpu.systemInfo.CCXCount];
+                    int[] masks = new int[cpu.info.topology.ccxs];
                     int coresInCcd = cpu.info.family == Cpu.Family.FAMILY_19H ? 8 : 4;
                     for (var i = 0; i < cpu.systemInfo.PhysicalCoreCount; i += coresInCcd)
                     {
@@ -901,7 +906,7 @@ namespace ZenStates
 
                     SetOCVid(Storage.Get<byte>($"oc_vid"));
 
-                    for (var i = 0; i < cpu.systemInfo.CCXCount; ++i)
+                    for (var i = 0; i < cpu.info.topology.ccxs; ++i)
                     {
                         uint targetFreq = Convert.ToUInt32(Storage.Get<double[]>($"ccx_frequencies")[i] * 100.00);
                         SetFrequencyCCX((uint)masks[i], targetFreq);
@@ -916,6 +921,11 @@ namespace ZenStates
             CheckBox cb = sender as CheckBox;
             bool res = SetProchot(cb.Checked);
             if (res) SetStatus("PROCHOT " + (cb.Checked ? "enabled." : "disabled."));
+        }
+
+        private void AppWindow_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            ExitApplication();
         }
     }
 }

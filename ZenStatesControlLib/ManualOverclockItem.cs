@@ -32,8 +32,8 @@ namespace ZenStates.Components
 
             for (int i = 0; i < Cores; ++i)
             {
-                bool enabled = ((~coreDisableMap >> i) & 1) == 1;
-                if (enabled)
+                int mapIndex = i < 8 ? 0 : 1;
+                if ((~coreDisableMap[mapIndex] >> i % 8 & 1) == 1)
                 {
                     int ccd = i / Constants.CCD_SIZE;
                     int ccx = i / coresInCcx - CcxInCcd * ccd;
@@ -105,7 +105,7 @@ namespace ZenStates.Components
         public event EventHandler ProchotClicked;
 
         #region Properties
-        public uint coreDisableMap { get; set; }
+        public uint[] coreDisableMap { get; set; }
         public int CcxInCcd { get; set; }
 
         public double Multi

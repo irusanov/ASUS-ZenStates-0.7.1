@@ -233,7 +233,7 @@ namespace ZenStates
             // manualOverclockItem
             // 
             this.manualOverclockItem.CcxInCcd = 0;
-            this.manualOverclockItem.coreDisableMap = ((uint)(0u));
+            this.manualOverclockItem.coreDisableMap = ((uint[])(new uint[]{ 0, 0 }));
             this.manualOverclockItem.Cores = 0;
             this.manualOverclockItem.Dock = System.Windows.Forms.DockStyle.Fill;
             this.manualOverclockItem.Location = new System.Drawing.Point(3, 3);
@@ -1008,6 +1008,7 @@ namespace ZenStates
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "Form1";
+            this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AppWindow_FormClosing);
             this.Shown += new System.EventHandler(this.AppWindow_Shown);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
             this.tabControl1.ResumeLayout(false);
