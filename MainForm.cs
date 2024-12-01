@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
-using System.Runtime;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using ZenStates.Components;
 using ZenStates.Core;
-using ZenStates.Properties;
 using ZenStates.Utils;
 
 namespace ZenStates
@@ -58,7 +58,8 @@ namespace ZenStates
             { PerfEnh.Level4_OC, "Level 4 (OC)" }
         };
 
-        private readonly Cpu cpu = new Cpu();
+        private readonly Cpu cpu = CpuSingleton.Instance;
+        private readonly AppSettings settings = new AppSettings().Load();
         private BackgroundWorker backgroundWorker;
         //private BindingSource siBindingSource;
         private PstateItem[] PstateItems;
@@ -73,6 +74,7 @@ namespace ZenStates
         {
             //cpu?.io?.Close(true);
             cpu?.Dispose();
+            settings?.Save();
 
             if (Application.MessageLoop)
                 Application.Exit();
@@ -154,6 +156,20 @@ namespace ZenStates
             //Enabled = true;
         }
 
+        private double GetEffectiveFrequency()
+        {
+            uint eax7 = default;
+            uint edx7 = default;
+            uint eax8 = default;
+            uint edx8 = default;
+            cpu.WriteMsr(0x000000E7, 0, 0);
+            cpu.WriteMsr(0x000000E8, 0, 0);
+            cpu.ReadMsr(0x000000E7, ref eax7, ref edx7);
+            cpu.ReadMsr(0x000000E8, ref eax8, ref edx8);
+            double FreqP0 = GetCurrentMulti(false);
+            return ((edx8 << 32 | eax8) / (edx7 << 32 | eax7)) * FreqP0;
+        }
+
         private double GetCurrentMulti(bool ocmode = false)
         {
             uint msr = ocmode ? MSR_PSTATE_BOOST : MSR_PStateDef0;
@@ -165,10 +181,15 @@ namespace ZenStates
                 return 0;
             }
 
-            double multi = 25 * (eax & 0xFF) / (12.5 * (eax >> 8 & 0x3F));
+            if (cpu.info.family < Cpu.Family.FAMILY_1AH)
+            {
+                double multi = 25 * (eax & 0xFF) / (12.5 * (eax >> 8 & 0x3F));
 
-            // OC mode only supports multipliers in 0.25 increment
-            return Math.Round(multi * 4, MidpointRounding.ToEven) / 4;
+                // OC mode only supports multipliers in 0.25 increment
+                return Math.Round(multi * 4, MidpointRounding.ToEven) / 4;
+            }
+
+            return Core.Utils.BitSlice(eax, 11, 0) * 5;
         }
 
         private byte GetCurrentVid(bool ocmode = false)
@@ -328,10 +349,12 @@ namespace ZenStates
         private void InitManualOc()
         {
             bool ocmode = cpu.GetOcMode();
-            manualOverclockItem.SVIVersion = cpu.smu.SMU_TYPE == SMU.SmuType.TYPE_CPU4 ? 3 : 2;
+            manualOverclockItem.Family = cpu.info.family;
             manualOverclockItem.OCmode = ocmode;
+            manualOverclockItem.VoltageLimit = settings.Zen5VoltageLimit;
             manualOverclockItem.Vid = GetCurrentVid(ocmode);
             manualOverclockItem.Multi = GetCurrentMulti(ocmode);
+            //manualOverclockItem.Frequency = (int)GetEffectiveFrequency();
             manualOverclockItem.ProchotEnabled = cpu.IsProchotEnabled();
             manualOverclockItem.coreDisableMap = cpu.info.topology.coreDisableMap;
             manualOverclockItem.CcxInCcd = (int)(cpu.info.topology.ccds / cpu.info.topology.ccxs);
@@ -490,6 +513,17 @@ namespace ZenStates
                 HandleError("Error setting frequency!");
                 return false;
             }
+
+            /*
+            uint eax = 0, edx = 0;
+            cpu.ReadMsr(MSR_PStateDef0, ref eax, ref edx);
+            eax = Core.Utils.SetBits(eax, 0, 12, frequency / 5);
+            uint targetVid = manualOverclockItem.Vid;
+            eax = Core.Utils.SetBits(eax, 14, 8, Core.Utils.BitSlice(targetVid, 7, 0));
+            edx = Core.Utils.SetBits(edx, 0, 1, Core.Utils.BitSlice(targetVid, 8, 8));
+            cpu.WriteMsr(MSR_PStateDef0, eax, edx);
+            */
+
             return true;
         }
 
@@ -519,15 +553,9 @@ namespace ZenStates
             return ret;
         }
 
-        private bool SetOCVid(byte vid)
+        private bool SetOCVid(uint vid)
         {
-            uint[] args = { Convert.ToUInt32(vid), 0 };
-            uint cmd = cpu.smu.Rsmu.SMU_MSG_SetOverclockCpuVid;
-            SMU.Status status = cmd != 0
-                ? cpu.smu.SendRsmuCommand(cmd, ref args)
-                : cpu.smu.SendMp1Command(cpu.smu.Mp1Smu.SMU_MSG_SetOverclockCpuVid, ref args);
-
-            if (status != SMU.Status.OK)
+            if (cpu.SetOverclockCpuVid(vid) != SMU.Status.OK)
             {
                 HandleError("Error setting CPU Overclock VID!");
                 return false;
@@ -564,8 +592,36 @@ namespace ZenStates
         {
             bool ret = false;
             var item = manualOverclockItem;
-            uint targetFreq = Convert.ToUInt32(item.Multi * 100.00);
-            uint currentFreq = Convert.ToUInt32(GetCurrentMulti(true) * 100.00);
+            uint targetFreq = Convert.ToUInt32(cpu.info.family >= Cpu.Family.FAMILY_1AH ? item.Frequency : item.Multi * 100.00);
+            uint currentFreq = 550;
+            try
+            {
+                var f = Convert.ToUInt32(cpu.info.family >= Cpu.Family.FAMILY_1AH ? cpu.GetCoreMulti() : cpu.GetCoreMulti() * 100.00);
+                currentFreq = f;
+            }
+            catch (Exception ex)
+            {
+            }
+
+            if (cpu.info.family >= Cpu.Family.FAMILY_1AH && item.Vid > Core.Utils.VoltageToVidSVI3(1.525))
+            {
+                if (!cpu.GetLN2Mode())
+                {
+                    HandleError("To set higher vcore than 1.525V, LN2 mode needs to be enabled in BIOS and temperature below -40C");
+                    return;
+                }
+                else
+                {
+                    DialogResult result = MessageBox.Show(
+                        "Do you really want to set vcore?\nYou can change upper limit from zenstates_settings.xml. Maximum supported is 2.8V",
+                        "Warning",
+                        MessageBoxButtons.YesNoCancel,
+                        MessageBoxIcon.Warning
+                    );
+
+                    if (result == DialogResult.No || result == DialogResult.Cancel) { return; }
+                }
+            }
 
             if (targetFreq > currentFreq)
                 SetOCVid(item.Vid);
@@ -707,6 +763,17 @@ namespace ZenStates
 
             return true;
         }
+
+        private void CheckBootState()
+        {
+            DateTime currentBootTime = BootTimeHelper.GetSystemBootTime();
+
+            if (settings?.LastBootTime != currentBootTime)
+            {
+                settings.LastBootTime = currentBootTime;
+                settings.Save();
+            }
+        }
         #endregion
 
         public AppWindow()
@@ -736,6 +803,7 @@ namespace ZenStates
                         "Default SMU addresses are not responding to commands.");
                 }
 
+                CheckBootState();
                 PopulatePstates();
                 InitPowerTab();
                 InitManualOc();
@@ -883,7 +951,10 @@ namespace ZenStates
                 }
 
                 SetFrequencyAllCore(550);
-                SetOCVid(0x98);
+                if (cpu.info.family <= Cpu.Family.FAMILY_17H)
+                    SetOCVid(0x98);
+                else
+                    SetOCVid(0);
             }
             else
             {

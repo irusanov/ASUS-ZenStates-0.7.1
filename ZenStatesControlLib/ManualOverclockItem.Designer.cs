@@ -36,7 +36,9 @@ namespace ZenStates.Components
             this.comboBoxControlMode = new System.Windows.Forms.ComboBox();
             this.comboBoxCore = new System.Windows.Forms.ComboBox();
             this.comboBoxMulti = new System.Windows.Forms.ComboBox();
+            this.numericUpDown = new System.Windows.Forms.NumericUpDown();
             this.tableLayoutPanel1.SuspendLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).BeginInit();
             this.SuspendLayout();
             // 
             // tableLayoutPanel1
@@ -53,12 +55,14 @@ namespace ZenStates.Components
             this.tableLayoutPanel1.Controls.Add(this.comboBoxControlMode, 1, 0);
             this.tableLayoutPanel1.Controls.Add(this.comboBoxCore, 2, 0);
             this.tableLayoutPanel1.Controls.Add(this.comboBoxMulti, 3, 0);
+            this.tableLayoutPanel1.Controls.Add(this.numericUpDown, 3, 0);
             this.tableLayoutPanel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel1.Location = new System.Drawing.Point(0, 0);
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 2;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 26F));
+            this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel1.Size = new System.Drawing.Size(335, 55);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
@@ -69,7 +73,7 @@ namespace ZenStates.Components
             this.checkBoxOCModeEnabled.Location = new System.Drawing.Point(3, 3);
             this.checkBoxOCModeEnabled.Name = "checkBoxOCModeEnabled";
             this.checkBoxOCModeEnabled.Padding = new System.Windows.Forms.Padding(0, 4, 0, 0);
-            this.checkBoxOCModeEnabled.Size = new System.Drawing.Size(39, 20);
+            this.checkBoxOCModeEnabled.Size = new System.Drawing.Size(60, 20);
             this.checkBoxOCModeEnabled.TabIndex = 6;
             this.checkBoxOCModeEnabled.Text = "En";
             this.checkBoxOCModeEnabled.UseVisualStyleBackColor = true;
@@ -83,10 +87,10 @@ namespace ZenStates.Components
             this.checkBoxProchot.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxProchot.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkBoxProchot.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.checkBoxProchot.Location = new System.Drawing.Point(47, 29);
+            this.checkBoxProchot.Location = new System.Drawing.Point(68, 29);
             this.checkBoxProchot.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.checkBoxProchot.Name = "checkBoxProchot";
-            this.checkBoxProchot.Size = new System.Drawing.Size(92, 23);
+            this.checkBoxProchot.Size = new System.Drawing.Size(85, 23);
             this.checkBoxProchot.TabIndex = 8;
             this.checkBoxProchot.Text = "PROCHOT";
             this.checkBoxProchot.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -99,10 +103,10 @@ namespace ZenStates.Components
             this.checkBoxSlowMode.CheckAlign = System.Drawing.ContentAlignment.MiddleCenter;
             this.checkBoxSlowMode.Dock = System.Windows.Forms.DockStyle.Fill;
             this.checkBoxSlowMode.FlatStyle = System.Windows.Forms.FlatStyle.System;
-            this.checkBoxSlowMode.Location = new System.Drawing.Point(143, 29);
+            this.checkBoxSlowMode.Location = new System.Drawing.Point(157, 29);
             this.checkBoxSlowMode.Margin = new System.Windows.Forms.Padding(2, 3, 2, 3);
             this.checkBoxSlowMode.Name = "checkBoxSlowMode";
-            this.checkBoxSlowMode.Size = new System.Drawing.Size(92, 23);
+            this.checkBoxSlowMode.Size = new System.Drawing.Size(85, 23);
             this.checkBoxSlowMode.TabIndex = 7;
             this.checkBoxSlowMode.Text = "Slow Mode";
             this.checkBoxSlowMode.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
@@ -114,10 +118,10 @@ namespace ZenStates.Components
             this.comboBoxVid.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxVid.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxVid.FormattingEnabled = true;
-            this.comboBoxVid.Location = new System.Drawing.Point(240, 30);
+            this.comboBoxVid.Location = new System.Drawing.Point(247, 30);
             this.comboBoxVid.Margin = new System.Windows.Forms.Padding(3, 4, 3, 2);
             this.comboBoxVid.Name = "comboBoxVid";
-            this.comboBoxVid.Size = new System.Drawing.Size(92, 21);
+            this.comboBoxVid.Size = new System.Drawing.Size(85, 21);
             this.comboBoxVid.TabIndex = 2;
             // 
             // comboBoxControlMode
@@ -129,9 +133,9 @@ namespace ZenStates.Components
             "Cores",
             "CCX",
             "CCD"});
-            this.comboBoxControlMode.Location = new System.Drawing.Point(48, 3);
+            this.comboBoxControlMode.Location = new System.Drawing.Point(69, 3);
             this.comboBoxControlMode.Name = "comboBoxControlMode";
-            this.comboBoxControlMode.Size = new System.Drawing.Size(90, 21);
+            this.comboBoxControlMode.Size = new System.Drawing.Size(83, 21);
             this.comboBoxControlMode.TabIndex = 9;
             this.comboBoxControlMode.SelectedIndexChanged += new System.EventHandler(this.ComboBoxControlMode_SelectedIndexChanged);
             // 
@@ -140,9 +144,9 @@ namespace ZenStates.Components
             this.comboBoxCore.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxCore.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxCore.FormattingEnabled = true;
-            this.comboBoxCore.Location = new System.Drawing.Point(144, 3);
+            this.comboBoxCore.Location = new System.Drawing.Point(158, 3);
             this.comboBoxCore.Name = "comboBoxCore";
-            this.comboBoxCore.Size = new System.Drawing.Size(90, 21);
+            this.comboBoxCore.Size = new System.Drawing.Size(83, 21);
             this.comboBoxCore.TabIndex = 1;
             // 
             // comboBoxMulti
@@ -150,10 +154,43 @@ namespace ZenStates.Components
             this.comboBoxMulti.Dock = System.Windows.Forms.DockStyle.Fill;
             this.comboBoxMulti.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.comboBoxMulti.FormattingEnabled = true;
-            this.comboBoxMulti.Location = new System.Drawing.Point(240, 3);
+            this.comboBoxMulti.Location = new System.Drawing.Point(247, 3);
             this.comboBoxMulti.Name = "comboBoxMulti";
-            this.comboBoxMulti.Size = new System.Drawing.Size(92, 21);
+            this.comboBoxMulti.Size = new System.Drawing.Size(85, 21);
             this.comboBoxMulti.TabIndex = 0;
+            // 
+            // numericUpDown
+            // 
+            this.numericUpDown.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
+            this.numericUpDown.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.numericUpDown.Enabled = false;
+            this.numericUpDown.Increment = new decimal(new int[] {
+            5,
+            0,
+            0,
+            0});
+            this.numericUpDown.Location = new System.Drawing.Point(3, 32);
+            this.numericUpDown.Maximum = new decimal(new int[] {
+            9000,
+            0,
+            0,
+            0});
+            this.numericUpDown.Minimum = new decimal(new int[] {
+            550,
+            0,
+            0,
+            0});
+            this.numericUpDown.MinimumSize = new System.Drawing.Size(60, 0);
+            this.numericUpDown.Name = "numericUpDown";
+            this.numericUpDown.Size = new System.Drawing.Size(60, 20);
+            this.numericUpDown.TabIndex = 10;
+            this.numericUpDown.Value = new decimal(new int[] {
+            550,
+            0,
+            0,
+            0});
+            this.numericUpDown.Visible = false;
+            this.numericUpDown.ValueChanged += new System.EventHandler(this.NumericUpDown_ValueChanged);
             // 
             // ManualOverclockItem
             // 
@@ -165,6 +202,7 @@ namespace ZenStates.Components
             this.Size = new System.Drawing.Size(335, 55);
             this.tableLayoutPanel1.ResumeLayout(false);
             this.tableLayoutPanel1.PerformLayout();
+            ((System.ComponentModel.ISupportInitialize)(this.numericUpDown)).EndInit();
             this.ResumeLayout(false);
 
         }
@@ -179,5 +217,6 @@ namespace ZenStates.Components
         private System.Windows.Forms.CheckBox checkBoxSlowMode;
         private System.Windows.Forms.CheckBox checkBoxProchot;
         private System.Windows.Forms.ComboBox comboBoxControlMode;
+        private System.Windows.Forms.NumericUpDown numericUpDown;
     }
 }

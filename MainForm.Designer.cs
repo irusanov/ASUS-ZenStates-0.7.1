@@ -96,6 +96,7 @@ namespace ZenStates
             this.trayMenuItemApp = new System.Windows.Forms.ToolStripMenuItem();
             this.trayMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonUndo = new System.Windows.Forms.Button();
+            this.label1 = new System.Windows.Forms.Label();
             this.tabControl1.SuspendLayout();
             this.cpuTabOC.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -162,6 +163,7 @@ namespace ZenStates
             this.tableLayoutPanel2.RowCount = 2;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
             this.tableLayoutPanel2.Size = new System.Drawing.Size(283, 218);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
@@ -233,18 +235,21 @@ namespace ZenStates
             // manualOverclockItem
             // 
             this.manualOverclockItem.CcxInCcd = 0;
-            this.manualOverclockItem.coreDisableMap = ((uint[])(new uint[]{ 0, 0 }));
+            this.manualOverclockItem.coreDisableMap = new uint[] {
+        ((uint)(0u)),
+        ((uint)(0u))};
             this.manualOverclockItem.Cores = 0;
             this.manualOverclockItem.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.manualOverclockItem.Family = ZenStates.Core.Cpu.Family.FAMILY_1AH;
+            this.manualOverclockItem.Frequency = 550;
             this.manualOverclockItem.Location = new System.Drawing.Point(3, 3);
             this.manualOverclockItem.Multi = 4D;
             this.manualOverclockItem.Name = "manualOverclockItem";
             this.manualOverclockItem.OCmode = false;
             this.manualOverclockItem.ProchotEnabled = false;
             this.manualOverclockItem.Size = new System.Drawing.Size(263, 55);
-            this.manualOverclockItem.SVIVersion = 2;
             this.manualOverclockItem.TabIndex = 0;
-            this.manualOverclockItem.Vid = ((byte)(232));
+            this.manualOverclockItem.VoltageLimit = 1.55D;
             this.manualOverclockItem.SlowModeClicked += new System.EventHandler(this.ManualOverclockItem_SlowModeClicked);
             this.manualOverclockItem.ProchotClicked += new System.EventHandler(this.ManualOverclockItem_ProchotClicked);
             // 
@@ -992,6 +997,15 @@ namespace ZenStates
             this.buttonUndo.Size = new System.Drawing.Size(75, 23);
             this.buttonUndo.TabIndex = 0;
             // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(3, 88);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 3;
+            this.label1.Text = "label1";
+            // 
             // AppWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -1114,6 +1128,7 @@ namespace ZenStates
         private System.Windows.Forms.Label labelPerfEnh;
         private System.Windows.Forms.Label divider1;
         private ManualOverclockItem manualOverclockItem;
+        private System.Windows.Forms.Label label1;
     }
 }
 

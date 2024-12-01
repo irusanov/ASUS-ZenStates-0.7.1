@@ -9,18 +9,23 @@ namespace ZenStates.Components
         private double multi = Constants.MULTI_MIN;
         private int cores = 0;
         private int coresInCcx = 4;
-        private byte vid = Constants.VID_MAX;
+        private uint vid = Constants.VID_MAX;
+        private int frequency = 550;
         private int selectedCoreIndex = -1;
         private bool ocmode = false;
         private bool prochot = false;
-        private int sviVersion = 2;
+        private Cpu.Family family = Cpu.Family.FAMILY_1AH;
+        private double voltageLimit = 1.55;
 
         #region Private Methods
         private void PopulateFrequencyList(ComboBox.ObjectCollection l)
         {
-            for (double m = Constants.MULTI_MAX; m >= Constants.MULTI_MIN; m -= Constants.MULTI_STEP)
+            if (Family < Cpu.Family.FAMILY_1AH)
             {
-                l.Add(new FrequencyListItem(m, string.Format("x{0:0.00}", m)));
+                for (double m = Constants.MULTI_MAX; m >= Constants.MULTI_MIN; m -= Constants.MULTI_STEP)
+                {
+                    l.Add(new FrequencyListItem(m, string.Format("x{0:0.00}", m)));
+                }
             }
         }
 
@@ -81,12 +86,23 @@ namespace ZenStates.Components
         private void PopulateVidItems()
         {
             comboBoxVid.Items.Clear();
-            for (uint i = Constants.VID_MIN; i <= Constants.VID_MAX; i++)
+            if (family <= Cpu.Family.FAMILY_19H)
             {
-                double voltage = SVIVersion == 3 ? Utils.VidToVoltageSVI3(i) : Utils.VidToVoltage(i);
-                CustomListItem item = new CustomListItem(i, string.Format("{0:0.000}V", voltage));
-                comboBoxVid.Items.Add(item);
-                // if (i == CpuVid) comboBoxVoltage.SelectedItem = item;
+                for (uint i = Constants.VID_MIN; i <= Constants.VID_MAX; i++)
+                {
+                    CustomListItem item = new CustomListItem(i, string.Format("{0:0.000}V", Utils.VidToVoltage(i)));
+                    comboBoxVid.Items.Add(item);
+                    // if (i == CpuVid) comboBoxVoltage.SelectedItem = item;
+                }
+            }
+            else
+            {
+                for (double i = 0.245; i <= voltageLimit; i+= 0.005)
+                {
+                    CustomListItem item = new CustomListItem(Utils.VoltageToVidSVI3(i), string.Format("{0:0.000}V", i));
+                    Console.WriteLine(item.Value);
+                    comboBoxVid.Items.Add(item);
+                }
             }
         }
 
@@ -110,7 +126,13 @@ namespace ZenStates.Components
 
         public double Multi
         {
-            get => (comboBoxMulti.SelectedItem as FrequencyListItem).Multi;
+            get {
+                if (Family <= Cpu.Family.FAMILY_19H)
+                {
+                    return (comboBoxMulti.SelectedItem as FrequencyListItem).Multi;
+                }
+                return 25.0;
+            }
             set
             {
                 multi = value;
@@ -147,9 +169,9 @@ namespace ZenStates.Components
             get => comboBoxCore.SelectedIndex;
         }
 
-        public byte Vid
+        public uint Vid
         {
-            get => (byte)(comboBoxVid.SelectedItem as CustomListItem).Value;
+            get => (comboBoxVid.SelectedItem as CustomListItem).Value;
             set
             {
                 vid = value;
@@ -157,6 +179,19 @@ namespace ZenStates.Components
                 {
                     if (item.Value == value)
                         comboBoxVid.SelectedItem = item;
+                }
+            }
+        }
+
+        public int Frequency
+        {
+            get => Convert.ToInt32(numericUpDown.Value);
+            set
+            {
+                if (value > 0)
+                {
+                    frequency = value;
+                    numericUpDown.Value = Convert.ToDecimal(value);
                 }
             }
         }
@@ -170,6 +205,10 @@ namespace ZenStates.Components
                 if (i == null)
                     return 0;
                 // Console.WriteLine($"SET - ccd: {i.CCD}, ccx: {i.CCX }, core: {i.CORE % 4 }");
+                if (Family > Cpu.Family.FAMILY_17H)
+                {
+                    return Convert.ToUInt32((i.CCD << 8 | i.CORE & 0xF) << 20);
+                }
                 return Convert.ToUInt32(((i.CCD << 4 | i.CCX % CcxInCcd & 0xF) << 4 | i.CORE % coresInCcx & 0xF) << 20);
             }
         }
@@ -186,7 +225,20 @@ namespace ZenStates.Components
 
         public int ControlMode => comboBoxControlMode.SelectedIndex;
 
-        public bool Changed => vid != Vid || multi != Multi || selectedCoreIndex != SelectedCoreIndex;
+        public bool Changed
+        {
+            get
+            {
+                if (Family <= Cpu.Family.FAMILY_1AH)
+                {
+                    return vid != Vid || multi != Multi || selectedCoreIndex != SelectedCoreIndex;
+                }
+                else
+                {
+                    return vid != Vid || frequency != Frequency || selectedCoreIndex != SelectedCoreIndex;
+                }
+            }
+        }
 
         public bool ModeChanged => ocmode != OCmode;
 
@@ -202,13 +254,31 @@ namespace ZenStates.Components
             }
         }
 
-        public int SVIVersion
+        public Cpu.Family Family
         {
-            get => sviVersion;
+            get => family;
             set
             {
-                sviVersion = value;
+                family = value;
+                checkBoxSlowMode.Enabled = ocmode && Family <= Cpu.Family.FAMILY_17H;
+                if (Family >= Cpu.Family.FAMILY_1AH)
+                {
+                    comboBoxMulti.Visible = false;
+                    numericUpDown.Visible = true;
+                }
                 PopulateVidItems();
+            }
+        }
+
+        public double VoltageLimit
+        {
+            get => voltageLimit;
+            set
+            {
+                if (value != voltageLimit && value >= 0.245 && value <= 2.8) {
+                    voltageLimit = value;
+                    PopulateVidItems();
+                }
             }
         }
 
@@ -218,6 +288,7 @@ namespace ZenStates.Components
             PopulateVidItems();
 
             Vid = vid;
+            Frequency = frequency;
             Multi = multi;
             OCmode = ocmode;
             comboBoxCore.SelectedIndex = selectedCoreIndex;
@@ -225,6 +296,7 @@ namespace ZenStates.Components
             comboBoxCore.Enabled = OCmode;
             comboBoxMulti.Enabled = OCmode;
             comboBoxVid.Enabled = OCmode;
+            numericUpDown.Enabled = OCmode;
 
             comboBoxControlMode.Enabled = OCmode;
             comboBoxControlMode.SelectedIndex = 0;
@@ -237,6 +309,7 @@ namespace ZenStates.Components
         public void UpdateState()
         {
             vid = Vid;
+            frequency = Frequency;
             multi = Multi;
             ocmode = OCmode;
             selectedCoreIndex = comboBoxCore.SelectedIndex;
@@ -248,10 +321,11 @@ namespace ZenStates.Components
             comboBoxCore.Enabled = OCmode;
             comboBoxMulti.Enabled = OCmode;
             comboBoxVid.Enabled = OCmode;
+            numericUpDown.Enabled= OCmode;
 
             comboBoxControlMode.Enabled = OCmode;
             checkBoxProchot.Enabled = OCmode;
-            checkBoxSlowMode.Enabled = OCmode;
+            checkBoxSlowMode.Enabled = OCmode && Family <= Cpu.Family.FAMILY_17H;
         }
 
         private void CheckBoxSlowMode_Click(object sender, EventArgs e)
@@ -283,6 +357,14 @@ namespace ZenStates.Components
             }
 
             comboBoxCore.SelectedIndex = items.Count - 1;
+        }
+
+        private void NumericUpDown_ValueChanged(object sender, EventArgs e)
+        {
+            decimal step = numericUpDown.Increment;
+            decimal value = numericUpDown.Value;
+
+            numericUpDown.Value = Math.Floor(value / step) * step;
         }
     }
 }
