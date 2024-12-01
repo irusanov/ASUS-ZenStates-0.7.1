@@ -86,7 +86,7 @@ namespace ZenStates.Components
         private void PopulateVidItems()
         {
             comboBoxVid.Items.Clear();
-            if (family <= Cpu.Family.FAMILY_19H)
+            if (family < Cpu.Family.FAMILY_19H)
             {
                 for (uint i = Constants.VID_MIN; i <= Constants.VID_MAX; i++)
                 {
@@ -100,7 +100,6 @@ namespace ZenStates.Components
                 for (double i = 0.245; i <= voltageLimit; i+= 0.005)
                 {
                     CustomListItem item = new CustomListItem(Utils.VoltageToVidSVI3(i), string.Format("{0:0.000}V", i));
-                    Console.WriteLine(item.Value);
                     comboBoxVid.Items.Add(item);
                 }
             }
@@ -127,7 +126,7 @@ namespace ZenStates.Components
         public double Multi
         {
             get {
-                if (Family <= Cpu.Family.FAMILY_19H)
+                if (Family < Cpu.Family.FAMILY_1AH)
                 {
                     return (comboBoxMulti.SelectedItem as FrequencyListItem).Multi;
                 }
@@ -229,7 +228,7 @@ namespace ZenStates.Components
         {
             get
             {
-                if (Family <= Cpu.Family.FAMILY_1AH)
+                if (Family < Cpu.Family.FAMILY_1AH)
                 {
                     return vid != Vid || multi != Multi || selectedCoreIndex != SelectedCoreIndex;
                 }
@@ -260,13 +259,11 @@ namespace ZenStates.Components
             set
             {
                 family = value;
-                checkBoxSlowMode.Enabled = ocmode && Family <= Cpu.Family.FAMILY_17H;
-                if (Family >= Cpu.Family.FAMILY_1AH)
-                {
-                    comboBoxMulti.Visible = false;
-                    numericUpDown.Visible = true;
-                }
-                PopulateVidItems();
+                checkBoxSlowMode.Enabled = ocmode && Family < Cpu.Family.FAMILY_19H;
+                bool vidInput = Family >= Cpu.Family.FAMILY_1AH;
+                comboBoxMulti.Visible = !vidInput;
+                numericUpDown.Visible = vidInput;
+                Reset();
             }
         }
 

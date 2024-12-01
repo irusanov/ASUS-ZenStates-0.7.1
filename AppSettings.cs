@@ -12,7 +12,7 @@ namespace ZenStates
         private const int VERSION_MAJOR = 1;
         private const int VERSION_MINOR = 1;
 
-        private const string filename = "zenstates_settings.xml";
+        private const string filename = "ZenStates-settings.xml";
 
         public AppSettings()
         {
@@ -89,5 +89,7 @@ namespace ZenStates
         public int WindowTop { get; set; } = -1;
 
         public double Zen5VoltageLimit { get; set; } = 1.65;
+
+        public bool Zen5VoltageLimitWarning { get; set; } = true;
     }
 }

@@ -41,7 +41,7 @@ namespace ZenStates
             this.tableLayoutPanel3 = new System.Windows.Forms.TableLayoutPanel();
             this.groupBoxCpuFreq = new System.Windows.Forms.GroupBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
-            this.manualOverclockItem = new ZenStates.Components.ManualOverclockItem();
+            this.labelLN2BiosMode = new System.Windows.Forms.Label();
             this.tabGPU = new System.Windows.Forms.TabPage();
             this.tabPower = new System.Windows.Forms.TabPage();
             this.tableLayoutPanel9 = new System.Windows.Forms.TableLayoutPanel();
@@ -87,6 +87,8 @@ namespace ZenStates
             this.checkBoxMinToTray = new System.Windows.Forms.CheckBox();
             this.checkBoxStartMinimized = new System.Windows.Forms.CheckBox();
             this.checkBoxStartOnBoot = new System.Windows.Forms.CheckBox();
+            this.label9 = new System.Windows.Forms.Label();
+            this.comboBoxVoltageLimitSettings = new System.Windows.Forms.ComboBox();
             this.tableLayoutPanel4 = new System.Windows.Forms.TableLayoutPanel();
             this.buttonRefresh = new System.Windows.Forms.Button();
             this.statusText = new System.Windows.Forms.Label();
@@ -97,6 +99,9 @@ namespace ZenStates
             this.trayMenuItemExit = new System.Windows.Forms.ToolStripMenuItem();
             this.buttonUndo = new System.Windows.Forms.Button();
             this.label1 = new System.Windows.Forms.Label();
+            this.checkBoxZen5VoltageWarning = new System.Windows.Forms.CheckBox();
+            this.manualOverclockItem = new ZenStates.Components.ManualOverclockItem();
+            this.toolTip = new System.Windows.Forms.ToolTip(this.components);
             this.tabControl1.SuspendLayout();
             this.cpuTabOC.SuspendLayout();
             this.tableLayoutPanel2.SuspendLayout();
@@ -134,7 +139,7 @@ namespace ZenStates
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
             this.tabControl1.ShowToolTips = true;
-            this.tabControl1.Size = new System.Drawing.Size(299, 260);
+            this.tabControl1.Size = new System.Drawing.Size(299, 258);
             this.tabControl1.TabIndex = 1;
             // 
             // cpuTabOC
@@ -143,7 +148,7 @@ namespace ZenStates
             this.cpuTabOC.Location = new System.Drawing.Point(4, 22);
             this.cpuTabOC.Name = "cpuTabOC";
             this.cpuTabOC.Padding = new System.Windows.Forms.Padding(4, 8, 4, 8);
-            this.cpuTabOC.Size = new System.Drawing.Size(291, 234);
+            this.cpuTabOC.Size = new System.Drawing.Size(291, 232);
             this.cpuTabOC.TabIndex = 0;
             this.cpuTabOC.Text = "CPU";
             this.cpuTabOC.UseVisualStyleBackColor = true;
@@ -156,15 +161,16 @@ namespace ZenStates
             this.tableLayoutPanel2.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
             this.tableLayoutPanel2.Controls.Add(this.groupBoxPstates, 0, 1);
             this.tableLayoutPanel2.Controls.Add(this.groupBoxCpuFreq, 0, 0);
+            this.tableLayoutPanel2.Controls.Add(this.labelLN2BiosMode, 0, 2);
             this.tableLayoutPanel2.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel2.Location = new System.Drawing.Point(4, 8);
             this.tableLayoutPanel2.Margin = new System.Windows.Forms.Padding(0);
             this.tableLayoutPanel2.Name = "tableLayoutPanel2";
-            this.tableLayoutPanel2.RowCount = 2;
+            this.tableLayoutPanel2.RowCount = 3;
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
-            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 20F));
-            this.tableLayoutPanel2.Size = new System.Drawing.Size(283, 218);
+            this.tableLayoutPanel2.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel2.Size = new System.Drawing.Size(283, 216);
             this.tableLayoutPanel2.TabIndex = 2;
             // 
             // groupBoxPstates
@@ -173,8 +179,8 @@ namespace ZenStates
             this.groupBoxPstates.Controls.Add(this.tableLayoutPanel3);
             this.groupBoxPstates.Dock = System.Windows.Forms.DockStyle.Top;
             this.groupBoxPstates.FlatStyle = System.Windows.Forms.FlatStyle.Popup;
-            this.groupBoxPstates.Location = new System.Drawing.Point(3, 100);
-            this.groupBoxPstates.Margin = new System.Windows.Forms.Padding(3, 12, 3, 3);
+            this.groupBoxPstates.Location = new System.Drawing.Point(3, 93);
+            this.groupBoxPstates.Margin = new System.Windows.Forms.Padding(3, 5, 3, 3);
             this.groupBoxPstates.Name = "groupBoxPstates";
             this.groupBoxPstates.Padding = new System.Windows.Forms.Padding(4);
             this.groupBoxPstates.Size = new System.Drawing.Size(277, 21);
@@ -232,33 +238,26 @@ namespace ZenStates
             this.tableLayoutPanel1.Size = new System.Drawing.Size(269, 61);
             this.tableLayoutPanel1.TabIndex = 0;
             // 
-            // manualOverclockItem
+            // labelLN2BiosMode
             // 
-            this.manualOverclockItem.CcxInCcd = 0;
-            this.manualOverclockItem.coreDisableMap = new uint[] {
-        ((uint)(0u)),
-        ((uint)(0u))};
-            this.manualOverclockItem.Cores = 0;
-            this.manualOverclockItem.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.manualOverclockItem.Family = ZenStates.Core.Cpu.Family.FAMILY_1AH;
-            this.manualOverclockItem.Frequency = 550;
-            this.manualOverclockItem.Location = new System.Drawing.Point(3, 3);
-            this.manualOverclockItem.Multi = 4D;
-            this.manualOverclockItem.Name = "manualOverclockItem";
-            this.manualOverclockItem.OCmode = false;
-            this.manualOverclockItem.ProchotEnabled = false;
-            this.manualOverclockItem.Size = new System.Drawing.Size(263, 55);
-            this.manualOverclockItem.TabIndex = 0;
-            this.manualOverclockItem.VoltageLimit = 1.55D;
-            this.manualOverclockItem.SlowModeClicked += new System.EventHandler(this.ManualOverclockItem_SlowModeClicked);
-            this.manualOverclockItem.ProchotClicked += new System.EventHandler(this.ManualOverclockItem_ProchotClicked);
+            this.labelLN2BiosMode.AutoSize = true;
+            this.labelLN2BiosMode.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.labelLN2BiosMode.ForeColor = System.Drawing.SystemColors.GrayText;
+            this.labelLN2BiosMode.Location = new System.Drawing.Point(3, 198);
+            this.labelLN2BiosMode.Name = "labelLN2BiosMode";
+            this.labelLN2BiosMode.Padding = new System.Windows.Forms.Padding(0, 5, 0, 0);
+            this.labelLN2BiosMode.Size = new System.Drawing.Size(277, 18);
+            this.labelLN2BiosMode.TabIndex = 3;
+            this.labelLN2BiosMode.Text = "BIOS LN2 Mode: Disabled";
+            this.toolTip.SetToolTip(this.labelLN2BiosMode, "Set LN2 mode in BIOS to unlock high VID mode. The CPU temperature needs to be low" +
+        "er than -40C for this to work.");
             // 
             // tabGPU
             // 
             this.tabGPU.Location = new System.Drawing.Point(4, 22);
             this.tabGPU.Name = "tabGPU";
             this.tabGPU.Padding = new System.Windows.Forms.Padding(3);
-            this.tabGPU.Size = new System.Drawing.Size(291, 234);
+            this.tabGPU.Size = new System.Drawing.Size(291, 232);
             this.tabGPU.TabIndex = 1;
             this.tabGPU.Text = "GPU";
             this.tabGPU.UseVisualStyleBackColor = true;
@@ -269,7 +268,7 @@ namespace ZenStates
             this.tabPower.Location = new System.Drawing.Point(4, 22);
             this.tabPower.Name = "tabPower";
             this.tabPower.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPower.Size = new System.Drawing.Size(291, 234);
+            this.tabPower.Size = new System.Drawing.Size(291, 232);
             this.tabPower.TabIndex = 2;
             this.tabPower.Text = "Power";
             this.tabPower.UseVisualStyleBackColor = true;
@@ -310,7 +309,7 @@ namespace ZenStates
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel9.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel9.Size = new System.Drawing.Size(285, 228);
+            this.tableLayoutPanel9.Size = new System.Drawing.Size(285, 226);
             this.tableLayoutPanel9.TabIndex = 1;
             // 
             // numericUpDownScalar
@@ -527,7 +526,7 @@ namespace ZenStates
             this.tabTweaks.Location = new System.Drawing.Point(4, 22);
             this.tabTweaks.Name = "tabTweaks";
             this.tabTweaks.Padding = new System.Windows.Forms.Padding(4, 8, 4, 8);
-            this.tabTweaks.Size = new System.Drawing.Size(291, 234);
+            this.tabTweaks.Size = new System.Drawing.Size(291, 232);
             this.tabTweaks.TabIndex = 3;
             this.tabTweaks.Text = "Tweaks";
             this.tabTweaks.UseVisualStyleBackColor = true;
@@ -542,7 +541,7 @@ namespace ZenStates
             this.tableLayoutPanel8.Name = "tableLayoutPanel8";
             this.tableLayoutPanel8.RowCount = 1;
             this.tableLayoutPanel8.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel8.Size = new System.Drawing.Size(283, 218);
+            this.tableLayoutPanel8.Size = new System.Drawing.Size(283, 216);
             this.tableLayoutPanel8.TabIndex = 2;
             // 
             // groupBoxPerfBias
@@ -599,7 +598,7 @@ namespace ZenStates
             this.tabInfo.Location = new System.Drawing.Point(4, 22);
             this.tabInfo.Name = "tabInfo";
             this.tabInfo.Padding = new System.Windows.Forms.Padding(3);
-            this.tabInfo.Size = new System.Drawing.Size(291, 234);
+            this.tabInfo.Size = new System.Drawing.Size(291, 232);
             this.tabInfo.TabIndex = 4;
             this.tabInfo.Text = "Info";
             this.tabInfo.UseVisualStyleBackColor = true;
@@ -638,7 +637,7 @@ namespace ZenStates
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel5.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel5.Size = new System.Drawing.Size(285, 228);
+            this.tableLayoutPanel5.Size = new System.Drawing.Size(285, 226);
             this.tableLayoutPanel5.TabIndex = 1;
             // 
             // microcodeInfoLabel
@@ -834,32 +833,38 @@ namespace ZenStates
             this.tabSettings.Location = new System.Drawing.Point(4, 22);
             this.tabSettings.Name = "tabSettings";
             this.tabSettings.Padding = new System.Windows.Forms.Padding(3);
-            this.tabSettings.Size = new System.Drawing.Size(291, 234);
+            this.tabSettings.Size = new System.Drawing.Size(291, 232);
             this.tabSettings.TabIndex = 5;
             this.tabSettings.Text = "Settings";
             this.tabSettings.UseVisualStyleBackColor = true;
             // 
             // tableLayoutPanel6
             // 
-            this.tableLayoutPanel6.ColumnCount = 1;
-            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle(System.Windows.Forms.SizeType.Percent, 100F));
+            this.tableLayoutPanel6.ColumnCount = 2;
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
+            this.tableLayoutPanel6.ColumnStyles.Add(new System.Windows.Forms.ColumnStyle());
             this.tableLayoutPanel6.Controls.Add(this.checkBoxQcode, 0, 1);
             this.tableLayoutPanel6.Controls.Add(this.checkBoxMinToTray, 0, 3);
             this.tableLayoutPanel6.Controls.Add(this.checkBoxStartMinimized, 0, 4);
             this.tableLayoutPanel6.Controls.Add(this.checkBoxStartOnBoot, 0, 5);
+            this.tableLayoutPanel6.Controls.Add(this.label9, 0, 7);
+            this.tableLayoutPanel6.Controls.Add(this.comboBoxVoltageLimitSettings, 1, 7);
+            this.tableLayoutPanel6.Controls.Add(this.checkBoxZen5VoltageWarning, 0, 6);
             this.tableLayoutPanel6.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tableLayoutPanel6.Location = new System.Drawing.Point(3, 3);
             this.tableLayoutPanel6.Name = "tableLayoutPanel6";
             this.tableLayoutPanel6.Padding = new System.Windows.Forms.Padding(4);
-            this.tableLayoutPanel6.RowCount = 7;
+            this.tableLayoutPanel6.RowCount = 9;
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Absolute, 8F));
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
+            this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle());
             this.tableLayoutPanel6.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 100F));
-            this.tableLayoutPanel6.Size = new System.Drawing.Size(285, 228);
+            this.tableLayoutPanel6.Size = new System.Drawing.Size(285, 226);
             this.tableLayoutPanel6.TabIndex = 0;
             // 
             // checkBoxQcode
@@ -868,9 +873,10 @@ namespace ZenStates
             this.checkBoxQcode.Checked = true;
             this.checkBoxQcode.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxQcode.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxQcode.Enabled = false;
             this.checkBoxQcode.Location = new System.Drawing.Point(7, 15);
             this.checkBoxQcode.Name = "checkBoxQcode";
-            this.checkBoxQcode.Size = new System.Drawing.Size(271, 17);
+            this.checkBoxQcode.Size = new System.Drawing.Size(156, 17);
             this.checkBoxQcode.TabIndex = 0;
             this.checkBoxQcode.Text = "Q-Code temperature display";
             this.checkBoxQcode.UseVisualStyleBackColor = true;
@@ -881,9 +887,10 @@ namespace ZenStates
             this.checkBoxMinToTray.Checked = true;
             this.checkBoxMinToTray.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBoxMinToTray.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxMinToTray.Enabled = false;
             this.checkBoxMinToTray.Location = new System.Drawing.Point(7, 38);
             this.checkBoxMinToTray.Name = "checkBoxMinToTray";
-            this.checkBoxMinToTray.Size = new System.Drawing.Size(271, 17);
+            this.checkBoxMinToTray.Size = new System.Drawing.Size(156, 17);
             this.checkBoxMinToTray.TabIndex = 2;
             this.checkBoxMinToTray.Text = "Minimize to tray";
             this.checkBoxMinToTray.UseVisualStyleBackColor = true;
@@ -892,9 +899,10 @@ namespace ZenStates
             // 
             this.checkBoxStartMinimized.AutoSize = true;
             this.checkBoxStartMinimized.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxStartMinimized.Enabled = false;
             this.checkBoxStartMinimized.Location = new System.Drawing.Point(7, 61);
             this.checkBoxStartMinimized.Name = "checkBoxStartMinimized";
-            this.checkBoxStartMinimized.Size = new System.Drawing.Size(271, 17);
+            this.checkBoxStartMinimized.Size = new System.Drawing.Size(156, 17);
             this.checkBoxStartMinimized.TabIndex = 3;
             this.checkBoxStartMinimized.Text = "Start minimized";
             this.checkBoxStartMinimized.UseVisualStyleBackColor = true;
@@ -903,12 +911,33 @@ namespace ZenStates
             // 
             this.checkBoxStartOnBoot.AutoSize = true;
             this.checkBoxStartOnBoot.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.checkBoxStartOnBoot.Enabled = false;
             this.checkBoxStartOnBoot.Location = new System.Drawing.Point(7, 84);
             this.checkBoxStartOnBoot.Name = "checkBoxStartOnBoot";
-            this.checkBoxStartOnBoot.Size = new System.Drawing.Size(271, 17);
+            this.checkBoxStartOnBoot.Size = new System.Drawing.Size(156, 17);
             this.checkBoxStartOnBoot.TabIndex = 1;
             this.checkBoxStartOnBoot.Text = "Start with system";
             this.checkBoxStartOnBoot.UseVisualStyleBackColor = true;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.label9.Location = new System.Drawing.Point(7, 127);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(156, 27);
+            this.label9.TabIndex = 4;
+            this.label9.Text = "AM5 VID limit";
+            this.label9.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            // 
+            // comboBoxVoltageLimitSettings
+            // 
+            this.comboBoxVoltageLimitSettings.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.comboBoxVoltageLimitSettings.FormattingEnabled = true;
+            this.comboBoxVoltageLimitSettings.Location = new System.Drawing.Point(169, 130);
+            this.comboBoxVoltageLimitSettings.Name = "comboBoxVoltageLimitSettings";
+            this.comboBoxVoltageLimitSettings.Size = new System.Drawing.Size(109, 21);
+            this.comboBoxVoltageLimitSettings.TabIndex = 5;
             // 
             // tableLayoutPanel4
             // 
@@ -924,7 +953,7 @@ namespace ZenStates
             this.tableLayoutPanel4.Controls.Add(this.statusText, 0, 0);
             this.tableLayoutPanel4.Controls.Add(this.buttonApply, 3, 0);
             this.tableLayoutPanel4.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.tableLayoutPanel4.Location = new System.Drawing.Point(4, 264);
+            this.tableLayoutPanel4.Location = new System.Drawing.Point(4, 262);
             this.tableLayoutPanel4.Name = "tableLayoutPanel4";
             this.tableLayoutPanel4.RowCount = 1;
             this.tableLayoutPanel4.RowStyles.Add(new System.Windows.Forms.RowStyle());
@@ -1006,12 +1035,38 @@ namespace ZenStates
             this.label1.TabIndex = 3;
             this.label1.Text = "label1";
             // 
+            // checkBoxZen5VoltageWarning
+            // 
+            this.tableLayoutPanel6.SetColumnSpan(this.checkBoxZen5VoltageWarning, 2);
+            this.checkBoxZen5VoltageWarning.Location = new System.Drawing.Point(7, 107);
+            this.checkBoxZen5VoltageWarning.Name = "checkBoxZen5VoltageWarning";
+            this.checkBoxZen5VoltageWarning.Size = new System.Drawing.Size(202, 17);
+            this.checkBoxZen5VoltageWarning.TabIndex = 0;
+            this.checkBoxZen5VoltageWarning.Text = "High VID warning";
+            this.checkBoxZen5VoltageWarning.UseVisualStyleBackColor = true;
+            // 
+            // manualOverclockItem
+            // 
+            this.manualOverclockItem.CcxInCcd = 0;
+            this.manualOverclockItem.coreDisableMap = null;
+            this.manualOverclockItem.Cores = 0;
+            this.manualOverclockItem.Family = ZenStates.Core.Cpu.Family.FAMILY_1AH;
+            this.manualOverclockItem.Frequency = 550;
+            this.manualOverclockItem.Location = new System.Drawing.Point(3, 3);
+            this.manualOverclockItem.Multi = 25D;
+            this.manualOverclockItem.Name = "manualOverclockItem";
+            this.manualOverclockItem.OCmode = false;
+            this.manualOverclockItem.ProchotEnabled = false;
+            this.manualOverclockItem.Size = new System.Drawing.Size(263, 55);
+            this.manualOverclockItem.TabIndex = 0;
+            this.manualOverclockItem.VoltageLimit = 1.55D;
+            // 
             // AppWindow
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoSize = true;
-            this.ClientSize = new System.Drawing.Size(305, 295);
+            this.ClientSize = new System.Drawing.Size(305, 293);
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.tableLayoutPanel4);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.FixedSingle;
@@ -1021,7 +1076,7 @@ namespace ZenStates
             this.Padding = new System.Windows.Forms.Padding(4, 4, 2, 2);
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "Form1";
+            this.Text = "`";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.AppWindow_FormClosing);
             this.Shown += new System.EventHandler(this.AppWindow_Shown);
             this.Resize += new System.EventHandler(this.MainForm_Resize);
@@ -1069,10 +1124,6 @@ namespace ZenStates
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage cpuTabOC;
         private System.Windows.Forms.TabPage tabGPU;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
-        private System.Windows.Forms.GroupBox groupBoxCpuFreq;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
-        private System.Windows.Forms.GroupBox groupBoxPstates;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel4;
         private System.Windows.Forms.Button buttonApply;
         private System.Windows.Forms.Button buttonRefresh;
@@ -1108,7 +1159,6 @@ namespace ZenStates
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox comboBoxPerfBias;
-        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
         private System.Windows.Forms.Button buttonUndo;
         private System.Windows.Forms.GroupBox groupBoxPerfBias;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel8;
@@ -1127,8 +1177,18 @@ namespace ZenStates
         private System.Windows.Forms.ComboBox comboBoxPerfEnh;
         private System.Windows.Forms.Label labelPerfEnh;
         private System.Windows.Forms.Label divider1;
-        private ManualOverclockItem manualOverclockItem;
         private System.Windows.Forms.Label label1;
+        private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.ComboBox comboBoxVoltageLimitSettings;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel2;
+        private System.Windows.Forms.GroupBox groupBoxPstates;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel3;
+        private System.Windows.Forms.GroupBox groupBoxCpuFreq;
+        private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
+        private ManualOverclockItem manualOverclockItem;
+        private System.Windows.Forms.Label labelLN2BiosMode;
+        private System.Windows.Forms.CheckBox checkBoxZen5VoltageWarning;
+        private System.Windows.Forms.ToolTip toolTip;
     }
 }
 

@@ -133,13 +133,14 @@ namespace ZenStates
             // InitManualOc();
 
             // Resize main form
-            int pstatesHeight = groupBoxPstates.Height;
-            int expectedPstateHeight = 115;
+            int labelHeight = labelLN2BiosMode.Height + labelLN2BiosMode.Padding.Top;
+            int pstatesHeight = groupBoxPstates.Height + labelHeight;
+            int expectedPstateHeight = 115 + labelHeight;
 
             if (pstatesHeight > expectedPstateHeight)
             {
                 var formHeight = ActiveForm.Height;
-                ActiveForm.Height = formHeight + pstatesHeight - expectedPstateHeight;
+                ActiveForm.Height = formHeight + pstatesHeight + labelHeight - expectedPstateHeight;
             }
 
             comboBoxPerfBias.DataSource = PerfBiasDict.ToList();
@@ -342,6 +343,7 @@ namespace ZenStates
             }
 
             InitPowerTab();
+            InitSettingsTab();
 
             SetStatus("Refresh OK.");
         }
@@ -349,6 +351,8 @@ namespace ZenStates
         private void InitManualOc()
         {
             bool ocmode = cpu.GetOcMode();
+            bool ln2Mode = cpu.GetLN2Mode();
+
             manualOverclockItem.Family = cpu.info.family;
             manualOverclockItem.OCmode = ocmode;
             manualOverclockItem.VoltageLimit = settings.Zen5VoltageLimit;
@@ -359,6 +363,10 @@ namespace ZenStates
             manualOverclockItem.coreDisableMap = cpu.info.topology.coreDisableMap;
             manualOverclockItem.CcxInCcd = (int)(cpu.info.topology.ccds / cpu.info.topology.ccxs);
             manualOverclockItem.Cores = (int)cpu.info.topology.physicalCores;
+
+            if (ln2Mode) {
+                labelLN2BiosMode.Text = labelLN2BiosMode.Text.Replace("Disabled", "Enabled");
+            }
         }
 
         private bool WaitForDriverLoad()
@@ -420,6 +428,24 @@ namespace ZenStates
             }
         }
 
+        private void InitSettingsTab()
+        {
+            uint currentSetting = Core.Utils.VoltageToVidSVI3(settings.Zen5VoltageLimit);
+
+            for (double i = 0.245; i <= 2.800; i += 0.005)
+            {
+                uint vid = Core.Utils.VoltageToVidSVI3(i);
+                CustomListItem item = new CustomListItem(vid, string.Format("{0:0.000}V", i));
+                comboBoxVoltageLimitSettings.Items.Add(item);
+                if (vid == currentSetting)
+                {
+                    comboBoxVoltageLimitSettings.SelectedIndex = comboBoxVoltageLimitSettings.Items.Count - 1;
+                }
+            }
+
+            checkBoxZen5VoltageWarning.Checked = settings.Zen5VoltageLimitWarning;
+        }
+
         private void InitPowerTab()
         {
             checkBoxCPB.Checked = GetCPB();
@@ -438,7 +464,7 @@ namespace ZenStates
                 {
                     numericUpDownPPT.Value = Convert.ToDecimal(cpu.powerTable.Table[2]);
                     numericUpDownTDC.Value = Convert.ToDecimal(cpu.powerTable.Table[8]);
-                    numericUpDownEDC.Value = Convert.ToDecimal(cpu.powerTable.Table[61]);
+                    numericUpDownEDC.Value = Convert.ToDecimal(cpu.powerTable.Table[cpu.info.family >= Cpu.Family.FAMILY_19H ? 63 : 61]);
 
                     /*
                     GetPhysLong(dramPtr + 0x010, out data);
@@ -601,26 +627,6 @@ namespace ZenStates
             }
             catch (Exception ex)
             {
-            }
-
-            if (cpu.info.family >= Cpu.Family.FAMILY_1AH && item.Vid > Core.Utils.VoltageToVidSVI3(1.525))
-            {
-                if (!cpu.GetLN2Mode())
-                {
-                    HandleError("To set higher vcore than 1.525V, LN2 mode needs to be enabled in BIOS and temperature below -40C");
-                    return;
-                }
-                else
-                {
-                    DialogResult result = MessageBox.Show(
-                        "Do you really want to set vcore?\nYou can change upper limit from zenstates_settings.xml. Maximum supported is 2.8V",
-                        "Warning",
-                        MessageBoxButtons.YesNoCancel,
-                        MessageBoxIcon.Warning
-                    );
-
-                    if (result == DialogResult.No || result == DialogResult.Cancel) { return; }
-                }
             }
 
             if (targetFreq > currentFreq)
@@ -807,6 +813,7 @@ namespace ZenStates
                 PopulatePstates();
                 InitPowerTab();
                 InitManualOc();
+                InitSettingsTab();
                 RunBackgroundTask(InitSystemInfo, InitSystemInfo_Complete);
 
                 //Enabled = true;
@@ -825,6 +832,35 @@ namespace ZenStates
 
             if (selectedTab == cpuTabOC)
             {
+                if (manualOverclockItem.OCmode)
+                {
+                    if (cpu.info.family >= Cpu.Family.FAMILY_19H && manualOverclockItem.Vid > Core.Utils.VoltageToVidSVI3(1.520))
+                    {
+                        if (!cpu.GetLN2Mode())
+                        {
+                            HandleError("To set higher vcore than 1.520V, LN2 mode needs to be enabled in BIOS and temperature below -40C");
+                            manualOverclockItem.UpdateState();
+                            RefreshState();
+                            return;
+                        }
+                        else if (settings.Zen5VoltageLimitWarning)
+                        {
+                            DialogResult result = MessageBox.Show(
+                                "Do you really want to set vcore?\nYou can change disable this warning in Settings tab.",
+                                "Warning",
+                                MessageBoxButtons.YesNoCancel,
+                                MessageBoxIcon.Warning
+                            );
+
+                            if (result == DialogResult.No || result == DialogResult.Cancel)
+                            {
+                                RefreshState();
+                                return;
+                            }
+                        }
+                    }
+                }
+
                 if (manualOverclockItem.ModeChanged)
                 {
                     if (SetOcMode(manualOverclockItem.OCmode))
@@ -856,6 +892,14 @@ namespace ZenStates
                 cpu.SetEDCVDDLimit(Convert.ToUInt32(numericUpDownEDC.Value));
                 cpu.SetTDCVDDLimit(Convert.ToUInt32(numericUpDownTDC.Value));
                 cpu.SetPBOScalar(Convert.ToUInt32(numericUpDownScalar.Value));
+            }
+
+            if (selectedTab == tabSettings)
+            {
+                double vidLimit = Core.Utils.VidToVoltageSVI3((comboBoxVoltageLimitSettings.SelectedItem as CustomListItem).Value);
+                settings.Zen5VoltageLimit = vidLimit;
+                settings.Zen5VoltageLimitWarning = checkBoxZen5VoltageWarning.Checked;
+                settings.Save();
             }
 
             //RefreshState();
@@ -966,11 +1010,11 @@ namespace ZenStates
                 else
                 {
                     int[] masks = new int[cpu.info.topology.ccxs];
-                    int coresInCcd = cpu.info.family == Cpu.Family.FAMILY_19H ? 8 : 4;
+                    int coresInCcd = cpu.info.family >= Cpu.Family.FAMILY_19H ? 8 : 4;
                     for (var i = 0; i < cpu.systemInfo.PhysicalCoreCount; i += coresInCcd)
                     {
                         int ccd = i / 8;
-                        int ccx = cpu.info.family == Cpu.Family.FAMILY_19H ? ccd : i / 4 - 2 * ccd;
+                        int ccx = cpu.info.family >= Cpu.Family.FAMILY_19H ? ccd : i / 4 - 2 * ccd;
                         masks[index] = (ccd << 4 | ccx) << 24;
                         ++index;
                     }
