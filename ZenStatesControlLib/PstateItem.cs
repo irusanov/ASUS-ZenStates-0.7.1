@@ -162,7 +162,7 @@ namespace ZenStates.Components
             ValueChanged?.Invoke(new object(), new EventArgs());
         }
 
-        private void checkBoxPstateEnabled_CheckedChanged(object sender, EventArgs e)
+        private void CheckBoxPstateEnabled_CheckedChanged(object sender, EventArgs e)
         {
             Checked = checkBoxPstateEnabled.Checked;
             comboBoxFID.Enabled = Checked;
@@ -170,7 +170,7 @@ namespace ZenStates.Components
             comboBoxVID.Enabled = Checked;
         }
 
-        private void comboBoxDID_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxDID_SelectedIndexChanged(object sender, EventArgs e)
         {
             double targetMulti = CalculateMulti(InitialCpuFid, InitialCpuDid);
             CpuDid = GetSelectedItemValue(comboBoxDID);
@@ -179,12 +179,12 @@ namespace ZenStates.Components
             PopulateFidItems();
         }
 
-        private void comboBoxFID_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxFID_SelectedIndexChanged(object sender, EventArgs e)
         {
             CpuFid = GetSelectedItemValue(comboBoxFID);
         }
 
-        private void comboBoxVID_SelectedIndexChanged(object sender, EventArgs e)
+        private void ComboBoxVID_SelectedIndexChanged(object sender, EventArgs e)
         {
             CpuVid = GetSelectedItemValue(comboBoxVID);
         }

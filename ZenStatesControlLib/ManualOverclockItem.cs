@@ -259,10 +259,8 @@ namespace ZenStates.Components
             set
             {
                 family = value;
-                checkBoxSlowMode.Enabled = ocmode && Family < Cpu.Family.FAMILY_19H;
-                bool vidInput = Family >= Cpu.Family.FAMILY_1AH;
-                comboBoxMulti.Visible = !vidInput;
-                numericUpDown.Visible = vidInput;
+                //checkBoxSlowMode.Enabled = ocmode && Family < Cpu.Family.FAMILY_19H;
+                
                 Reset();
             }
         }
@@ -288,8 +286,10 @@ namespace ZenStates.Components
             Frequency = frequency;
             Multi = multi;
             OCmode = ocmode;
-            comboBoxCore.SelectedIndex = selectedCoreIndex;
-
+            if (selectedCoreIndex < comboBoxCore.Items.Count - 1)
+            {
+                comboBoxCore.SelectedIndex = selectedCoreIndex;
+            }
             comboBoxCore.Enabled = OCmode;
             comboBoxMulti.Enabled = OCmode;
             comboBoxVid.Enabled = OCmode;
@@ -298,7 +298,11 @@ namespace ZenStates.Components
             comboBoxControlMode.Enabled = OCmode;
             comboBoxControlMode.SelectedIndex = 0;
             checkBoxProchot.Enabled = OCmode;
-            checkBoxSlowMode.Enabled = OCmode;
+            checkBoxSlowMode.Enabled = OCmode && Family < Cpu.Family.FAMILY_19H;
+
+            bool vidInput = Family >= Cpu.Family.FAMILY_1AH;
+            comboBoxMulti.Visible = !vidInput;
+            numericUpDown.Visible = vidInput;
 
             checkBoxProchot.Checked = ProchotEnabled;
         }

@@ -67,7 +67,7 @@
             this.comboBoxFID.Name = "comboBoxFID";
             this.comboBoxFID.Size = new System.Drawing.Size(90, 21);
             this.comboBoxFID.TabIndex = 4;
-            this.comboBoxFID.SelectedIndexChanged += new System.EventHandler(this.comboBoxFID_SelectedIndexChanged);
+            this.comboBoxFID.SelectedIndexChanged += new System.EventHandler(this.ComboBoxFID_SelectedIndexChanged);
             // 
             // comboBoxDID
             // 
@@ -79,7 +79,7 @@
             this.comboBoxDID.Name = "comboBoxDID";
             this.comboBoxDID.Size = new System.Drawing.Size(90, 21);
             this.comboBoxDID.TabIndex = 2;
-            this.comboBoxDID.SelectedIndexChanged += new System.EventHandler(this.comboBoxDID_SelectedIndexChanged);
+            this.comboBoxDID.SelectedIndexChanged += new System.EventHandler(this.ComboBoxDID_SelectedIndexChanged);
             // 
             // comboBoxVID
             // 
@@ -91,7 +91,7 @@
             this.comboBoxVID.Name = "comboBoxVID";
             this.comboBoxVID.Size = new System.Drawing.Size(92, 21);
             this.comboBoxVID.TabIndex = 3;
-            this.comboBoxVID.SelectedIndexChanged += new System.EventHandler(this.comboBoxVID_SelectedIndexChanged);
+            this.comboBoxVID.SelectedIndexChanged += new System.EventHandler(this.ComboBoxVID_SelectedIndexChanged);
             // 
             // checkBoxPstateEnabled
             // 
@@ -104,7 +104,7 @@
             this.checkBoxPstateEnabled.TabIndex = 5;
             this.checkBoxPstateEnabled.Text = "P0";
             this.checkBoxPstateEnabled.UseVisualStyleBackColor = true;
-            this.checkBoxPstateEnabled.CheckedChanged += new System.EventHandler(this.checkBoxPstateEnabled_CheckedChanged);
+            this.checkBoxPstateEnabled.CheckedChanged += new System.EventHandler(this.CheckBoxPstateEnabled_CheckedChanged);
             // 
             // PstateItem
             // 

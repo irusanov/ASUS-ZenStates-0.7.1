@@ -193,18 +193,23 @@ namespace ZenStates
             return Core.Utils.BitSlice(eax, 11, 0) * 5;
         }
 
-        private byte GetCurrentVid(bool ocmode = false)
+        private uint GetCurrentVid(bool ocmode = false)
         {
-            uint msr = ocmode ? MSR_PSTATE_BOOST : MSR_PStateDef0;
-            uint eax = default, edx = default;
+            //uint msr = ocmode ? MSR_PSTATE_BOOST : MSR_PStateDef0;
+            if (ocmode)
+            {
+                int vid = cpu.GetCurrentHwVid();
+                return vid > -1 ? (uint)vid : 0;
+            }
 
-            if (!cpu.ReadMsr(msr, ref eax, ref edx))
+            uint eax = default, edx = default;
+            if (!cpu.ReadMsr(MSR_PStateDef0, ref eax, ref edx))
             {
                 HandleError("Error getting current VID!");
                 return 0;
             }
 
-            return (byte)(eax >> 14 & 0xFF);
+            return eax >> 14 & 0x1FF;
         }
 
         private bool GetCPB()
@@ -464,7 +469,7 @@ namespace ZenStates
                 {
                     numericUpDownPPT.Value = Convert.ToDecimal(cpu.powerTable.Table[2]);
                     numericUpDownTDC.Value = Convert.ToDecimal(cpu.powerTable.Table[8]);
-                    numericUpDownEDC.Value = Convert.ToDecimal(cpu.powerTable.Table[cpu.info.family >= Cpu.Family.FAMILY_19H ? 63 : 61]);
+                    numericUpDownEDC.Value = Convert.ToDecimal(cpu.powerTable.Table[cpu.info.family >= Cpu.Family.FAMILY_1AH ? 63 : 61]);
 
                     /*
                     GetPhysLong(dramPtr + 0x010, out data);
